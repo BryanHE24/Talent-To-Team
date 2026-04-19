@@ -9,7 +9,7 @@
 | 5 | Summarizer Agent | In Progress | TBD |
 | 6 | Job Matcher Agent | In Progress | - |
 |7|Report Agent|In Progress|TBD|
-| 8 | HR Auth + Dashboard | Pending | - |
+|8|HR Auth + Dashboard|In Progress|TBD|
 | 9 | Meta-Agent | Pending | - |
 | 10 | Applicant Card + Report View | Pending | - |
 | 11 | Polish + E2E Test | Pending | - |
