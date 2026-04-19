@@ -7,7 +7,7 @@
 | 3 | A2A Orchestrator | Done | TBD |
 | 4 | CV Analyzer Agent | In Progress | TBD |
 | 5 | Summarizer Agent | In Progress | TBD |
-| 6 | Job Matcher Agent | Pending | - |
+| 6 | Job Matcher Agent | In Progress | - |
 | 7 | Report Agent | Pending | - |
 | 8 | HR Auth + Dashboard | Pending | - |
 | 9 | Meta-Agent | Pending | - |

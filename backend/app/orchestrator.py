@@ -1,6 +1,7 @@
 from .models import ApplicationPayload
 from .agents.cv_analyzer import analyze_cv
 from .agents.summarizer import summarize_candidate
+from .agents.job_matcher import match_candidate
 
 def route_cv_analyzer(payload: ApplicationPayload) -> dict:
     # Phase 4: Integrated real CV analyzer agent
@@ -11,15 +12,13 @@ def route_summarizer(analyzer_output: dict) -> dict:
     return summarize_candidate(analyzer_output)
 
 def route_job_matcher(summary_output: dict) -> dict:
-    return {
-        "match_score": 85,
-        "recommendation": "Advance to technical interview."
-    }
+    # Phase 6: Integrated real Job Matcher agent
+    return match_candidate(summary_output)
 
 def route_report_agent(match_output: dict) -> dict:
     return {
         "final_decision": "Recommended",
-        "score": match_output["match_score"],
+        "score": match_output["overall_score"],
         "notes": match_output["recommendation"]
     }
 
