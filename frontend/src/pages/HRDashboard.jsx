@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import ApplicantCard from '../components/ApplicantCard';
 
 export default function HRDashboard() {
   const [applications, setApplications] = useState([]);
@@ -80,44 +81,16 @@ export default function HRDashboard() {
       {loading ? (
         <p>Loading applicants...</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', border: '1px solid #e5e7eb' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid #ccc', backgroundColor: '#f3f4f6' }}>
-                <th style={{ padding: '1rem' }}>Candidate Name</th>
-                <th style={{ padding: '1rem' }}>Applied Role</th>
-                <th style={{ padding: '1rem' }}>Status</th>
-                <th style={{ padding: '1rem' }}>Final Score</th>
-                <th style={{ padding: '1rem' }}>Report ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app) => {
-                const roleTitle = app.roles?.title || 'Unknown Role';
-                // reports can be an object or array depending on Postgres setup
-                const report = Array.isArray(app.reports) ? app.reports[0] : app.reports;
-                const finalScore = report?.report_json?.final_score || 'N/A';
-                const reportId = report?.id || 'Pending';
-
-                return (
-                  <tr key={app.id} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '1rem' }}>{app.candidate_name}</td>
-                    <td style={{ padding: '1rem' }}>{roleTitle}</td>
-                    <td style={{ padding: '1rem', textTransform: 'capitalize' }}>{app.status}</td>
-                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{finalScore}</td>
-                    <td style={{ padding: '1rem', fontSize: '0.8rem', color: '#666', fontFamily: 'monospace' }}>{reportId}</td>
-                  </tr>
-                );
-              })}
-              {applications.length === 0 && (
-                <tr>
-                  <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
-                    No applications found in the database.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div>
+          <h2 style={{ marginBottom: '1rem', color: '#1F2937' }}>Applicant Roster</h2>
+          {applications.map((app) => (
+            <ApplicantCard key={app.id} app={app} />
+          ))}
+          {applications.length === 0 && (
+            <div style={{ padding: '3rem', textAlign: 'center', color: '#6B7280', border: '1px dashed #D1D5DB', borderRadius: '8px' }}>
+              No applications found in the database.
+            </div>
+          )}
         </div>
       )}
     </div>
