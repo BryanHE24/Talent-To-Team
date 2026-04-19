@@ -1,25 +1,15 @@
-# PHASES — Talent to Team
+# Phases
 
-| Phase | Name                                   | Status        | Commit Hash | Notes |
-|------|----------------------------------------|--------------|------------|------|
-| 0    | Project Scaffold & GitHub Init         | pending      |            |      |
-| 1    | Database Schema + FastAPI Base         | pending      |            |      |
-| 2    | Candidate Portal + Apply Endpoint      | pending      |            |      |
-| 3    | Antigravity CV Evaluation Skill        | pending      |            |      |
-| 4    | HR Dashboard + Candidate Management    | pending      |            |      |
-| 5    | Autonomous Onboarding Swarm            | pending      |            |      |
-
----
-
-## Status Definitions
-- **pending** → Not started
-- **in-progress** → Currently being implemented
-- **done** → Completed and committed
-
----
-
-## Rules
-- Update **Status** immediately when a phase starts/finishes
-- Add **Commit Hash** after successful commit
-- Keep **Notes** short (scope decisions, blockers, deviations)
-- One phase = one commit (strict)
+| Phase | Name | Status | Commit |
+|---|---|---|---|
+| 1 | Project Scaffold | DONE | Done |
+| 2 | Candidate Portal UI | In Progress | TBD |
+| 3 | A2A Orchestrator | Pending | - |
+| 4 | CV Analyzer Agent | Pending | - |
+| 5 | Summarizer Agent | Pending | - |
+| 6 | Job Matcher Agent | Pending | - |
+| 7 | Report Agent | Pending | - |
+| 8 | HR Auth + Dashboard | Pending | - |
+| 9 | Meta-Agent | Pending | - |
+| 10 | Applicant Card + Report View | Pending | - |
+| 11 | Polish + E2E Test | Pending | - |
