@@ -1,17 +1,14 @@
 from .models import ApplicationPayload
+from .agents.cv_analyzer import analyze_cv
+from .agents.summarizer import summarize_candidate
 
 def route_cv_analyzer(payload: ApplicationPayload) -> dict:
-    return {
-        "skills": ["Python", "FastAPI"],
-        "experience": "4 years",
-        "education": "BS Computer Science"
-    }
+    # Phase 4: Integrated real CV analyzer agent
+    return analyze_cv(payload.cv_text)
 
 def route_summarizer(analyzer_output: dict) -> dict:
-    return {
-        "summary": "Strong backend candidate with relevant Python/FastAPI experience.",
-        "skills_match": True
-    }
+    # Phase 5: Integrated real Summarizer agent
+    return summarize_candidate(analyzer_output)
 
 def route_job_matcher(summary_output: dict) -> dict:
     return {

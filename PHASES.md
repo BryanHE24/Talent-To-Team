@@ -4,9 +4,9 @@
 |---|---|---|---|
 | 1 | Project Scaffold | DONE | Done |
 | 2 | Candidate Portal UI | DONE | TBD |
-| 3 | A2A Orchestrator | In Progress | TBD |
-| 4 | CV Analyzer Agent | Pending | - |
-| 5 | Summarizer Agent | Pending | - |
+| 3 | A2A Orchestrator | Done | TBD |
+| 4 | CV Analyzer Agent | In Progress | TBD |
+| 5 | Summarizer Agent | In Progress | TBD |
 | 6 | Job Matcher Agent | Pending | - |
 | 7 | Report Agent | Pending | - |
 | 8 | HR Auth + Dashboard | Pending | - |
