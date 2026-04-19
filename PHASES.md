@@ -8,7 +8,7 @@
 | 4 | CV Analyzer Agent | In Progress | TBD |
 | 5 | Summarizer Agent | In Progress | TBD |
 | 6 | Job Matcher Agent | In Progress | - |
-| 7 | Report Agent | Pending | - |
+|7|Report Agent|In Progress|TBD|
 | 8 | HR Auth + Dashboard | Pending | - |
 | 9 | Meta-Agent | Pending | - |
 | 10 | Applicant Card + Report View | Pending | - |

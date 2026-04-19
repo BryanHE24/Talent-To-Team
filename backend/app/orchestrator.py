@@ -2,6 +2,7 @@ from .models import ApplicationPayload
 from .agents.cv_analyzer import analyze_cv
 from .agents.summarizer import summarize_candidate
 from .agents.job_matcher import match_candidate
+from .agents.report_agent import generate_report
 
 def route_cv_analyzer(payload: ApplicationPayload) -> dict:
     # Phase 4: Integrated real CV analyzer agent
@@ -16,11 +17,8 @@ def route_job_matcher(summary_output: dict) -> dict:
     return match_candidate(summary_output)
 
 def route_report_agent(match_output: dict) -> dict:
-    return {
-        "final_decision": "Recommended",
-        "score": match_output["overall_score"],
-        "notes": match_output["recommendation"]
-    }
+    # Phase 7: Integrated real Report Agent
+    return generate_report(match_output)
 
 def run_a2a_pipeline(payload: ApplicationPayload) -> dict:
     # Sequential processing mimicking A2A agent chain
