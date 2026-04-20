@@ -169,6 +169,21 @@ async def applications_endpoint():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/applications/{app_id}")
+async def delete_application_endpoint(app_id: str):
+    """Deletes an application (and its associated reports via cascading or manual depending on DB)."""
+    client = get_supabase_client()
+    if not client:
+        raise HTTPException(status_code=500, detail="No Supabase client")
+    try:
+        # We manually delete reports first to ensure no foreign key violation if there's no cascade
+        client.table("reports").delete().eq("application_id", app_id).execute()
+        res = client.table("applications").delete().eq("id", app_id).execute()
+        return {"status": "success", "deleted": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @app.get("/meta-summary")
 async def meta_summary_endpoint():

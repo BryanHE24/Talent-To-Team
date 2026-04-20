@@ -58,6 +58,22 @@ export default function HRDashboard() {
     setLoading(false);
   }, []);
 
+  /* ── Delete Application ── */
+  const handleDeleteApplication = async (appId) => {
+    if (!window.confirm("Are you sure you want to delete this candidate? This action cannot be undone.")) return;
+    try {
+      const res = await fetch(`${API}/applications/${appId}`, { method: 'DELETE' });
+      if (res.ok) {
+        setApplications(prev => prev.filter(a => a.id !== appId));
+      } else {
+        alert("Failed to delete candidate.");
+      }
+    } catch (e) {
+      alert("Error deleting candidate.");
+    }
+  };
+
+
   /* ── Fetch roles ── */
   const loadRoles = useCallback(async () => {
     setRolesLoading(true);
@@ -202,7 +218,12 @@ export default function HRDashboard() {
                 </div>
               ) : (
                 filtered.map((app, i) => (
-                  <ApplicantCard key={app.id} app={app} index={i} />
+                  <ApplicantCard 
+                    key={app.id} 
+                    app={app} 
+                    index={i} 
+                    onDelete={() => handleDeleteApplication(app.id)} 
+                  />
                 ))
               )}
             </div>

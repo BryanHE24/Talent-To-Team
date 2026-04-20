@@ -19,7 +19,7 @@ function getInitials(name = '') {
   return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 }
 
-export default function ApplicantCard({ app, index = 0 }) {
+export default function ApplicantCard({ app, index = 0, onDelete }) {
   const [expanded, setExpanded] = useState(false);
 
   const roleTitle  = app.roles?.title || 'Unknown Role';
@@ -115,6 +115,28 @@ export default function ApplicantCard({ app, index = 0 }) {
 
           {/* Report Detail */}
           <ReportDetail mappedReport={mapped} />
+
+          {/* Actions */}
+          {onDelete && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', borderTop: '1px solid var(--outline)', paddingTop: '1rem' }}>
+              <button 
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                className="anim-fade-up"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  padding: '0.5rem 1rem', background: 'transparent',
+                  border: '1px solid var(--error)', color: 'var(--error)',
+                  borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                  fontSize: '0.875rem', fontWeight: 600, transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 69, 58, 0.1)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                Delete Candidate
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>
