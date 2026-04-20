@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const API = 'http://127.0.0.1:8000';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 const DEPTS    = ['Engineering', 'Product', 'Design', 'Data', 'Marketing', 'Sales', 'Operations', 'HR', 'Other'];
 const EMP_TYPES = ['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance'];

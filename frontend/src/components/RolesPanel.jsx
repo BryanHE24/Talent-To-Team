@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const API = 'http://127.0.0.1:8000';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 const STATUS_MAP = {
   open:   { label: 'Open',   color: 'var(--tertiary)',  bg: 'rgba(76,215,246,0.1)' },

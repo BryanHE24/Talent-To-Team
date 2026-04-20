@@ -22,7 +22,8 @@ export default function CVUploadForm({ prefilledRole }) {
       `Extracted CV simulated for ${name}. Professional deeply experienced in ${role} and modern scalable architectures. Over 5 years of active industry delivery across frontend and backend implementations.`;
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/orchestrator', {
+      const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+      const res = await fetch(`${API}/orchestrator`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

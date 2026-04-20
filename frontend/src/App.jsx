@@ -10,7 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/"   element={<CandidatePortal />} />
           <Route path="/hr" element={<HRDashboard />} />
@@ -21,3 +21,4 @@ function App() {
 }
 
 export default App;
+

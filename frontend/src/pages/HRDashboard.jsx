@@ -5,7 +5,7 @@ import ApplicantCard from '../components/ApplicantCard';
 import CreateRoleModal from '../components/CreateRoleModal';
 import RolesPanel from '../components/RolesPanel';
 
-const API = 'http://127.0.0.1:8000';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 const KPI_CONFIG = [
   { label: 'Total Pipeline',  key: 'total',     icon: 'group',             color: 'var(--primary)',   glow: '#c0c1ff' },
