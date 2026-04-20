@@ -1414,3 +1414,223 @@ html, body, #root {
 }
 
 .empty-desc { font-size: 0.875rem; }
+.empty-desc { font-size: 0.875rem; }
+
+/* ═══════════════════════════════════════════════════════
+   CREATE ROLE — Modal Drawer
+   ═══════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-drawer {
+  position: relative; width: 520px; max-width: 100vw; height: 100dvh;
+  background: #191920; border-left: 1px solid var(--glass-border);
+  display: flex; flex-direction: column; overflow: hidden;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-drawer--open { transform: translateX(0); }
+
+.modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 1.75rem 1.75rem 1.25rem; border-bottom: 1px solid var(--glass-border); flex-shrink: 0;
+}
+.modal-title {
+  display: flex; align-items: center; gap: 0.625rem;
+  font-family: var(--font-headline); font-size: 1.25rem; font-weight: 900;
+  color: var(--on-surface); letter-spacing: -0.02em;
+}
+.modal-subtitle { font-size: 0.75rem; color: var(--outline); margin-top: 0.25rem; padding-left: 1.875rem; }
+
+.modal-close-btn {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md); color: var(--outline); cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.modal-close-btn:hover { color: var(--on-surface); background: rgba(255,255,255,0.08); }
+
+.modal-steps {
+  display: flex; align-items: center; padding: 1rem 1.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04); position: relative; flex-shrink: 0;
+}
+.modal-step {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 0.6875rem;
+  font-weight: 600; color: var(--outline); z-index: 1; flex: 1;
+}
+.modal-step.active { color: var(--on-surface); }
+.modal-step.done   { color: var(--tertiary); }
+.modal-step-dot {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--surface-hi);
+  border: 1px solid var(--glass-border); display: flex; align-items: center;
+  justify-content: center; font-size: 0.625rem; font-weight: 800; flex-shrink: 0; transition: all 0.3s;
+}
+.modal-step.active .modal-step-dot { background: var(--indigo-dim); border-color: var(--indigo); color: var(--indigo); }
+.modal-step.done   .modal-step-dot { background: rgba(76,215,246,0.1); border-color: var(--tertiary); color: var(--tertiary); }
+.modal-step-line { position: absolute; bottom: 0; left: 1.75rem; right: 1.75rem; height: 2px; background: var(--surface-hi); }
+.modal-step-line::after {
+  content: ''; position: absolute; top: 0; left: 0; height: 100%;
+  width: var(--line-pct, 0%);
+  background: linear-gradient(90deg, var(--indigo), var(--tertiary));
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-body { flex: 1; overflow-y: auto; padding: 1.5rem 1.75rem; scrollbar-width: thin; scrollbar-color: var(--surface-hi) transparent; }
+.modal-step-content { display: flex; flex-direction: column; gap: 1.125rem; }
+.modal-field { display: flex; flex-direction: column; gap: 0.375rem; }
+.modal-field-label {
+  display: flex; align-items: center; gap: 0.375rem; font-size: 0.6875rem;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--outline);
+}
+.modal-input {
+  background: var(--surface-low); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg); padding: 0.75rem 1rem; font-size: 0.9375rem;
+  color: var(--on-surface); font-family: var(--font-body); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s; width: 100%; resize: vertical;
+}
+.modal-input:focus {
+  border-color: rgba(192,193,255,0.35);
+  box-shadow: 0 0 0 3px rgba(192,193,255,0.06), 0 0 16px -4px rgba(192,193,255,0.1);
+}
+.modal-input::placeholder { color: var(--outline-var); }
+.modal-select { appearance: none; cursor: pointer; }
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Skill tag input */
+.skill-tag-input {
+  background: var(--surface-low); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg); padding: 0.5rem 0.75rem; min-height: 3rem;
+  transition: border-color 0.2s, box-shadow 0.2s; cursor: text;
+}
+.skill-tag-input:focus-within { border-color: rgba(192,193,255,0.35); box-shadow: 0 0 0 3px rgba(192,193,255,0.06); }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; align-items: center; }
+.skill-tag {
+  display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem;
+  background: rgba(192,193,255,0.08); border: 1px solid rgba(192,193,255,0.2);
+  border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; color: var(--primary); transition: background 0.2s;
+}
+.skill-tag-remove { background: none; border: none; color: var(--outline); cursor: pointer; display: flex; align-items: center; padding: 0; line-height: 1; transition: color 0.2s; }
+.skill-tag-remove:hover { color: var(--error); }
+.skill-tag-field { background: none; border: none; outline: none; color: var(--on-surface); font-size: 0.875rem; font-family: var(--font-body); flex: 1; min-width: 120px; padding: 0.25rem 0; }
+.skill-tag-field::placeholder { color: var(--outline-var); }
+
+/* Priority grid */
+.priority-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.priority-btn {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem;
+  background: var(--surface-low); border: 1px solid var(--glass-border); border-radius: var(--radius-md);
+  color: var(--outline); font-size: 0.8125rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+}
+.priority-btn:hover { background: var(--surface-hi); color: var(--on-surface); }
+.priority-btn--active { background: var(--surface-hi); color: var(--on-surface); border-color: rgba(255,255,255,0.15); }
+.priority-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Status grid */
+.status-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.status-btn {
+  padding: 0.625rem 0.875rem; background: var(--surface-low); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md); color: var(--outline); font-size: 0.8125rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: var(--font-body); text-align: left;
+}
+.status-btn:hover { background: var(--surface-hi); }
+.status-btn--active { font-weight: 700; background: var(--surface-hi); }
+
+/* Role preview card */
+.role-preview-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 1.25rem; position: relative; overflow: hidden; }
+.role-preview-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--indigo), var(--tertiary)); opacity: 0.5; }
+
+/* Footer */
+.modal-footer { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.75rem; border-top: 1px solid var(--glass-border); flex-shrink: 0; gap: 0.75rem; }
+.modal-btn-ghost {
+  padding: 0.625rem 1.25rem; background: transparent; border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg); color: var(--outline); font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+}
+.modal-btn-ghost:hover { color: var(--on-surface); background: rgba(255,255,255,0.04); }
+.modal-btn-primary {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.5rem;
+  background: var(--indigo-dim); border: 1px solid var(--indigo-border); border-radius: var(--radius-lg);
+  color: var(--indigo); font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: var(--font-body);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-btn-primary:hover:not(:disabled) { background: rgba(129,140,248,0.2); box-shadow: 0 0 20px rgba(129,140,248,0.15); transform: translateY(-1px); }
+.modal-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ═══════════════════════════════════════════════════════
+   ROLES PANEL & ROLE CARDS (HR view)
+   ═══════════════════════════════════════════════════════ */
+.roles-panel { width: 100%; }
+.role-card {
+  background: var(--surface-low); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl); padding: 1.25rem 1.375rem; margin-bottom: 0.75rem;
+  position: relative; transition: background 0.25s, border-color 0.25s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+}
+.role-card:hover { background: var(--surface-mid); border-color: rgba(144,143,160,0.22); transform: translateY(-1px); }
+.role-card--muted { opacity: 0.55; }
+.role-card-action {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: var(--radius-md);
+  color: var(--outline); cursor: pointer; transition: all 0.2s;
+}
+.role-card-action:hover:not(:disabled) { color: var(--error); border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.06); }
+.role-card-action:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.2rem 0.625rem;
+  border-radius: var(--radius-full); font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+.closed-roles-section { margin-top: 1rem; }
+.closed-roles-toggle { font-size: 0.75rem; color: var(--outline); cursor: pointer; display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0; list-style: none; user-select: none; }
+.closed-roles-toggle:hover { color: var(--on-surface-var); }
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD TABS
+   ═══════════════════════════════════════════════════════ */
+.dashboard-tabs {
+  display: flex; gap: 0.25rem; background: var(--surface-low); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl); padding: 0.375rem; width: fit-content;
+}
+.dashboard-tab {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.125rem; border-radius: var(--radius-lg);
+  font-size: 0.8125rem; font-weight: 600; color: var(--outline); background: transparent; border: none;
+  cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); font-family: var(--font-body); position: relative;
+}
+.dashboard-tab:hover { color: var(--on-surface); }
+.dashboard-tab--active { background: var(--surface-hi); color: var(--on-surface); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; background: var(--indigo-dim); border: 1px solid var(--indigo-border);
+  border-radius: 50%; font-size: 0.5625rem; font-weight: 800; color: var(--indigo);
+}
+
+/* ═══════════════════════════════════════════════════════
+   NEW ROLE CTAs
+   ═══════════════════════════════════════════════════════ */
+.nav-new-role-btn {
+  display: flex; align-items: center; gap: 0.5rem; margin: 0 1rem 1.25rem;
+  padding: 0.75rem 1rem; background: var(--indigo-dim); border: 1px solid var(--indigo-border);
+  border-radius: var(--radius-lg); color: var(--indigo); font-size: 0.8125rem; font-weight: 700;
+  cursor: pointer; font-family: var(--font-headline); letter-spacing: -0.01em;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-new-role-btn:hover { background: rgba(129,140,248,0.2); box-shadow: 0 0 20px rgba(129,140,248,0.12); transform: translateY(-1px); }
+
+.topbar-new-role-btn {
+  display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem;
+  background: var(--indigo-dim); border: 1px solid var(--indigo-border); border-radius: var(--radius-lg);
+  color: var(--indigo); font-size: 0.8125rem; font-weight: 700; cursor: pointer; font-family: var(--font-body);
+  transition: all 0.2s; white-space: nowrap;
+}
+.topbar-new-role-btn:hover { background: rgba(129,140,248,0.18); transform: translateY(-1px); }
+
+.btn-create-role {
+  display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem;
+  background: var(--indigo-dim); border: 1px solid var(--indigo-border); border-radius: var(--radius-lg);
+  color: var(--indigo); font-size: 0.8125rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+}
+.btn-create-role:hover { background: rgba(129,140,248,0.18); transform: translateY(-1px); }

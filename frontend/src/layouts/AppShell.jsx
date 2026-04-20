@@ -1,16 +1,16 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
-  { icon: 'group',     label: 'Talent Pipeline', path: '/hr' },
-  { icon: 'work',      label: 'Open Roles',      path: '/'   },
-  { icon: 'analytics', label: 'Analytics',       path: '/hr' },
-  { icon: 'psychology',label: 'Insights',        path: '/hr' },
-  { icon: 'settings',  label: 'Settings',        path: '/hr' },
+  { icon: 'group',      label: 'Talent Pipeline', path: '/hr',  tabId: 'pipeline' },
+  { icon: 'work',       label: 'Open Roles',      path: '/hr',  tabId: 'roles'    },
+  { icon: 'analytics',  label: 'Analytics',       path: '/hr',  tabId: 'pipeline' },
+  { icon: 'psychology', label: 'Insights',        path: '/hr',  tabId: 'pipeline' },
+  { icon: 'settings',   label: 'Settings',        path: '/hr',  tabId: 'pipeline' },
 ];
 
-export default function AppShell({ children, activePath, onLogout, user }) {
-  const navigate = useNavigate();
+export default function AppShell({ children, activePath, onLogout, user, onNewRole }) {
+  const navigate  = useNavigate();
 
   const initials = user?.email
     ? user.email.slice(0, 2).toUpperCase()
@@ -44,6 +44,14 @@ export default function AppShell({ children, activePath, onLogout, user }) {
           ))}
         </ul>
 
+        {/* Sidebar CTA */}
+        {onNewRole && (
+          <button className="nav-new-role-btn" onClick={onNewRole}>
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add_circle</span>
+            New Role
+          </button>
+        )}
+
         <div className="nav-footer">PREMIUM TIER • A2A ENGINE</div>
       </aside>
 
@@ -59,16 +67,19 @@ export default function AppShell({ children, activePath, onLogout, user }) {
             />
           </div>
           <div className="top-bar-right">
+            {/* "+ New Role" CTA in top bar */}
+            {onNewRole && (
+              <button className="topbar-new-role-btn" onClick={onNewRole}>
+                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
+                New Role
+              </button>
+            )}
             <div>
               <div className="top-bar-title">Command Center</div>
               <div className="top-bar-subtitle">System Operational</div>
             </div>
             {onLogout && (
-              <button
-                className="icon-btn magnetic-btn"
-                onClick={onLogout}
-                title="Logout"
-              >
+              <button className="icon-btn magnetic-btn" onClick={onLogout} title="Logout">
                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span>
               </button>
             )}
@@ -83,14 +94,13 @@ export default function AppShell({ children, activePath, onLogout, user }) {
 
       {/* ── Mobile Bottom Nav ── */}
       <nav className="bottom-nav">
-        {['dashboard', 'person_search', 'chat_bubble', 'account_circle'].map((icon, i) => (
+        {['dashboard', 'person_search', 'work', 'account_circle'].map((icon, i) => (
           <span
             key={icon}
             className="material-symbols-outlined"
             style={{
               color: i === 0 ? 'var(--tertiary)' : '#555',
-              fontSize: '22px',
-              cursor: 'pointer',
+              fontSize: '22px', cursor: 'pointer',
               filter: i === 0 ? 'drop-shadow(0 0 6px rgba(76,215,246,0.6))' : 'none',
               transition: 'transform 0.2s',
             }}
@@ -100,8 +110,8 @@ export default function AppShell({ children, activePath, onLogout, user }) {
         ))}
       </nav>
 
-      {/* ── FAB ── */}
-      <button className="fab">
+      {/* ── FAB — triggers New Role ── */}
+      <button className="fab" onClick={onNewRole} title="Create new role">
         <span className="material-symbols-outlined">add</span>
       </button>
     </div>

@@ -1,41 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CVUploadForm from '../components/CVUploadForm';
 import '../styles/dashboard.css';
 import '../styles/animations.css';
 
-const OPEN_ROLES = [
+const API = 'http://127.0.0.1:8000';
+
+const STATIC_ROLES = [
   {
-    id: 1,
-    dept: 'AI Engineering',
+    id: 'static-1',
     title: 'AI Recruiter Engineer',
+    dept: 'AI Engineering',
     description: 'Build the next generation of autonomous A2A recruitment tooling using LLMs and agent orchestration.',
     reqs: ['React', 'Python', 'LLMs', 'FastAPI'],
+    badge: 'Featured',
   },
   {
-    id: 2,
-    dept: 'Frontend',
+    id: 'static-2',
     title: 'Frontend React Developer',
+    dept: 'Frontend',
     description: 'Craft premium candidate-facing portals with glassmorphic UI, micro-animations, and fluid data states.',
     reqs: ['React', 'CSS', 'Vite', 'Motion Design'],
+    badge: null,
   },
   {
-    id: 3,
-    dept: 'Backend',
+    id: 'static-3',
     title: 'FastAPI Backend Engineer',
+    dept: 'Backend',
     description: 'Architect robust, agent-native backends that scale. Own the data layer from Supabase to OpenAI.',
     reqs: ['Python', 'FastAPI', 'Postgres', 'Supabase'],
+    badge: null,
   },
 ];
 
 const FEATURES = [
-  { icon: 'psychology',        text: 'AI-powered fit scoring' },
-  { icon: 'bolt',              text: 'Instant A2A processing' },
-  { icon: 'lock',              text: 'GDPR-compliant data handling' },
+  { icon: 'psychology',           text: 'AI-powered fit scoring' },
+  { icon: 'bolt',                 text: 'Instant A2A processing' },
+  { icon: 'lock',                 text: 'GDPR-compliant data handling' },
   { icon: 'notifications_active', text: 'Real-time status updates' },
 ];
 
+function extractDept(role) {
+  const match = /Dept: ([^|\\n]+)/.exec(role.description || '');
+  return match ? match[1].trim() : '';
+}
+
+function extractStatus(role) {
+  const desc = role.description || '';
+  if (desc.includes('Status: Closed')) return 'closed';
+  if (desc.includes('Status: Paused')) return 'paused';
+  return 'open';
+}
+
+function extractSkills(role) {
+  return (role.requirements || '').split(',').map(s => s.trim()).filter(Boolean);
+}
+
 export default function CandidatePortal() {
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole]   = useState('');
+  const [liveRoles, setLiveRoles]         = useState([]);
+  const [rolesLoading, setRolesLoading]   = useState(true);
+
+  /* ── Fetch live roles from backend ── */
+  useEffect(() => {
+    async function loadRoles() {
+      setRolesLoading(true);
+      try {
+        const res  = await fetch(`${API}/roles`);
+        const json = await res.json();
+        // Only show open/paused roles to candidates
+        const open = (json.roles || []).filter(r => extractStatus(r) !== 'closed');
+        setLiveRoles(open);
+      } catch {
+        // Fallback to empty — static roles always show
+      }
+      setRolesLoading(false);
+    }
+    loadRoles();
+  }, []);
 
   const scrollToForm = (roleTitle) => {
     setSelectedRole(roleTitle);
@@ -44,37 +85,48 @@ export default function CandidatePortal() {
     }, 50);
   };
 
+  /* ── Merge: live roles first, then static (filtered to avoid duplication) ── */
+  const liveRoleTitles = new Set(liveRoles.map(r => r.title.toLowerCase()));
+  const staticFallbacks = STATIC_ROLES.filter(r => !liveRoleTitles.has(r.title.toLowerCase()));
+  const allRoles = [
+    ...liveRoles.map(r => ({
+      id: r.id,
+      title: r.title,
+      dept: extractDept(r) || 'Role',
+      description: (r.description || '').split('---')[0].trim(),
+      reqs: extractSkills(r),
+      badge: 'New',
+      isLive: true,
+    })),
+    ...staticFallbacks,
+  ];
+
   return (
     <div className="portal-page">
       {/* ── Hero ── */}
       <section className="portal-hero">
         <div className="portal-hero-glow" />
-        {/* Ambient orbs */}
-        <div
-          style={{
-            position: 'absolute', top: '20%', left: '10%',
-            width: '300px', height: '300px',
-            background: 'radial-gradient(circle, rgba(192,193,255,0.06), transparent 70%)',
-            borderRadius: '50%',
-            animation: 'ambientFloat 10s ease-in-out infinite',
-            pointerEvents: 'none',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute', bottom: '10%', right: '12%',
-            width: '220px', height: '220px',
-            background: 'radial-gradient(circle, rgba(76,215,246,0.06), transparent 70%)',
-            borderRadius: '50%',
-            animation: 'ambientFloat 14s ease-in-out infinite reverse',
-            pointerEvents: 'none',
-          }}
-        />
+        <div style={{
+          position: 'absolute', top: '20%', left: '10%',
+          width: '300px', height: '300px',
+          background: 'radial-gradient(circle, rgba(192,193,255,0.06), transparent 70%)',
+          borderRadius: '50%',
+          animation: 'ambientFloat 10s ease-in-out infinite',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '10%', right: '12%',
+          width: '220px', height: '220px',
+          background: 'radial-gradient(circle, rgba(76,215,246,0.06), transparent 70%)',
+          borderRadius: '50%',
+          animation: 'ambientFloat 14s ease-in-out infinite reverse',
+          pointerEvents: 'none',
+        }} />
 
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '700px', padding: '4rem 2rem' }}>
           <div className="portal-hero-badge anim-fade-in">
             <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>bolt</span>
-            A2A Intelligence Engine · Live
+            A2A Intelligence Engine · {allRoles.length} Roles Open
           </div>
           <h1 className="portal-hero-title anim-fade-up delay-1">
             Where Talent Meets<br />Intelligence
@@ -86,44 +138,69 @@ export default function CandidatePortal() {
             <button className="btn-primary" onClick={() => scrollToForm('')}>
               Apply Now
             </button>
-            <button className="btn-secondary">View All Roles</button>
+            <button className="btn-secondary" onClick={() => document.getElementById('roles-section')?.scrollIntoView({ behavior: 'smooth' })}>
+              View All Roles
+            </button>
           </div>
         </div>
       </section>
 
       {/* ── Body ── */}
       <div className="portal-body">
-        {/* Roles */}
-        <div className="portal-section-header anim-fade-up">
+        {/* Roles section */}
+        <div id="roles-section" className="portal-section-header anim-fade-up">
           <h2 className="portal-section-title">Open Positions</h2>
           <span style={{ fontSize: '0.8125rem', color: 'var(--outline)' }}>
-            {OPEN_ROLES.length} roles available
+            {rolesLoading ? 'Loading…' : `${allRoles.length} role${allRoles.length !== 1 ? 's' : ''} available`}
           </span>
         </div>
 
-        <div className="roles-grid">
-          {OPEN_ROLES.map((role, i) => (
-            <div
-              key={role.id}
-              className={`role-card anim-fade-up delay-${i + 1} ${selectedRole === role.title ? 'selected' : ''}`}
-              onClick={() => scrollToForm(role.title)}
-            >
-              <div className="role-dept">{role.dept}</div>
-              <h3 className="role-title">{role.title}</h3>
-              <p className="role-desc">{role.description}</p>
-              <div className="role-reqs">
-                {role.reqs.map(r => <span key={r} className="req-tag">{r}</span>)}
-              </div>
-              <div className="role-apply-btn">
-                {selectedRole === role.title ? '✓ Selected — scroll down to apply' : 'Select & Apply →'}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Loading shimmer */}
+        {rolesLoading && (
+          <div className="roles-grid">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="skeleton" style={{ height: '200px', borderRadius: 'var(--radius-xl)' }} />
+            ))}
+          </div>
+        )}
 
-        {/* Upload section */}
+        {!rolesLoading && (
+          <div className="roles-grid">
+            {allRoles.map((role, i) => (
+              <div
+                key={role.id}
+                className={`role-card anim-fade-up delay-${(i % 3) + 1} ${selectedRole === role.title ? 'selected' : ''}`}
+                onClick={() => scrollToForm(role.title)}
+              >
+                {role.badge && (
+                  <span style={{
+                    position: 'absolute', top: '1rem', right: '1rem',
+                    fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase',
+                    letterSpacing: '0.1em', padding: '0.25rem 0.5rem',
+                    background: role.badge === 'New' ? 'rgba(76,215,246,0.15)' : 'rgba(192,193,255,0.15)',
+                    color: role.badge === 'New' ? 'var(--tertiary)' : 'var(--primary)',
+                    border: `1px solid ${role.badge === 'New' ? 'rgba(76,215,246,0.3)' : 'rgba(192,193,255,0.3)'}`,
+                    borderRadius: 'var(--radius-sm)',
+                  }}>
+                    {role.badge}
+                  </span>
+                )}
+                <div className="role-dept" style={{ position: 'relative' }}>{role.dept}</div>
+                <h3 className="role-title" style={{ position: 'relative' }}>{role.title}</h3>
+                <p className="role-desc" style={{ position: 'relative' }}>{role.description}</p>
+                <div className="role-reqs" style={{ position: 'relative' }}>
+                  {(role.reqs || []).slice(0, 5).map(r => <span key={r} className="req-tag">{r}</span>)}
+                </div>
+                <div className="role-apply-btn" style={{ position: 'relative' }}>
+                  {selectedRole === role.title ? '✓ Selected — scroll down to apply' : 'Select & Apply →'}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Apply section */}
         <div id="apply-section" className="upload-section">
-          {/* Pitch copy */}
           <div className="upload-pitch anim-fade-up">
             <h3>
               Your career,<br />supercharged by<br />
@@ -135,10 +212,7 @@ export default function CandidatePortal() {
             <ul className="upload-features">
               {FEATURES.map(f => (
                 <li key={f.text}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: '18px', color: 'var(--tertiary)' }}
-                  >
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--tertiary)' }}>
                     {f.icon}
                   </span>
                   {f.text}
@@ -146,37 +220,25 @@ export default function CandidatePortal() {
               ))}
             </ul>
           </div>
-
-          {/* Form card */}
-          <CVUploadForm prefilledRole={selectedRole} />
+          <CVUploadForm prefilledRole={selectedRole} availableRoles={allRoles.map(r => r.title)} />
         </div>
       </div>
 
-      {/* ── Footer strip ── */}
-      <footer
-        style={{
-          borderTop: '1px solid var(--glass-border)',
-          padding: '1.5rem 2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          color: 'var(--outline)',
-          fontSize: '0.75rem',
-        }}
-      >
+      {/* ── Footer ── */}
+      <footer style={{
+        borderTop: '1px solid var(--glass-border)',
+        padding: '1.5rem 2rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        color: 'var(--outline)',
+        fontSize: '0.75rem',
+      }}>
         <div style={{ fontFamily: 'var(--font-headline)', fontWeight: 900, color: '#333', letterSpacing: '-0.03em' }}>
           HIREFLOW
         </div>
         <div>© 2026 · Powered by A2A Agent Orchestration</div>
-        <a
-          href="/hr"
-          style={{
-            color: 'var(--indigo)',
-            textDecoration: 'none',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-          }}
-        >
+        <a href="/hr" style={{ color: 'var(--indigo)', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 600 }}>
           HR Dashboard
         </a>
       </footer>
