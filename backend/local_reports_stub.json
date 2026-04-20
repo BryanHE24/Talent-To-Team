@@ -1,0 +1,30 @@
+{
+  "81ef3cfa-b831-4e95-9d3b-c878c516bb5c": {
+    "candidate_recommendation": "Error",
+    "final_score": 0,
+    "strengths": [],
+    "risks": [],
+    "hr_summary": "Failed to generate report: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable"
+  },
+  "6737d523-beda-40d5-92f9-496fddb17cd3": {
+    "candidate_recommendation": "Error",
+    "final_score": 0,
+    "strengths": [],
+    "risks": [],
+    "hr_summary": "Failed to generate report: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable"
+  },
+  "3f57ecc5-0d14-4afe-ba38-7a4be6e7ef60": {
+    "candidate_recommendation": "Error",
+    "final_score": 0,
+    "strengths": [],
+    "risks": [],
+    "hr_summary": "Failed to generate report: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable"
+  },
+  "c06af6c2-1e79-4059-8818-bb2fa871e6fe": {
+    "candidate_recommendation": "Error",
+    "final_score": 0,
+    "strengths": [],
+    "risks": [],
+    "hr_summary": "Failed to generate report: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable"
+  }
+}

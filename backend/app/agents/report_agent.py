@@ -3,7 +3,7 @@ from ..utils.openai_client import call_openai_json
 from ..prompts.report_agent_prompt import REPORT_AGENT_SYSTEM_PROMPT
 from ..utils.supabase_client import store_report
 
-def generate_report(match_output: dict) -> dict:
+def generate_report(match_output: dict, application_id: str = None) -> dict:
     user_prompt = f"MATCHER DATA:\n{json.dumps(match_output, indent=2)}"
     
     try:
@@ -22,7 +22,7 @@ def generate_report(match_output: dict) -> dict:
         }
 
     # Persist structured report to Supabase
-    stored_report_id = store_report(parsed_data)
+    stored_report_id = store_report(parsed_data, application_id)
     
     # Enforce strict output contract including the DB record ID
     parsed_data["stored_report_id"] = stored_report_id

@@ -2,52 +2,121 @@ import React, { useState } from 'react';
 import ReportDetail from './ReportDetail';
 import { mapReportData } from '../utils/reportMapper';
 
-export default function ApplicantCard({ app }) {
+const PIPELINE_STAGES = [
+  { icon: 'description',   label: 'CV Analyzer',   sub: 'Extraction'   },
+  { icon: 'auto_awesome',  label: 'Summarizer',    sub: 'Insights Core' },
+  { icon: 'dataset_linked',label: 'Job Matcher',   sub: 'Context Delta' },
+  { icon: 'summarize',     label: 'Report Agent',  sub: 'AI Report'    },
+];
+
+function scoreColor(score) {
+  if (score >= 80) return 'var(--tertiary)';
+  if (score >= 60) return 'var(--primary)';
+  return 'var(--error)';
+}
+
+function getInitials(name = '') {
+  return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+}
+
+export default function ApplicantCard({ app, index = 0 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const roleTitle = app.roles?.title || 'Unknown Role';
-  
-  // Intercept reports conditionally assuming standard DB relational payload bindings
-  const rawReport = Array.isArray(app.reports) ? app.reports[0] : app.reports;
-  const mappedReport = mapReportData(rawReport);
-  
+  const roleTitle  = app.roles?.title || 'Unknown Role';
+  const rawReport  = Array.isArray(app.reports) ? app.reports[0] : app.reports;
+  const mapped     = mapReportData(rawReport);
+  const score      = mapped.final_score || 0;
+  const filled     = Math.round((score / 100) * 5);
+
   return (
-    <div style={{ border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '1rem', overflow: 'hidden' }}>
-      <div 
-        onClick={() => setExpanded(!expanded)} 
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          justifyContent: 'space-between', 
-          padding: '1.25rem', 
-          cursor: 'pointer', 
-          background: expanded ? '#fff' : '#F9FAFB',
-          borderBottom: expanded ? '1px solid #E5E7EB' : 'none',
-          transition: 'background 0.2s'
-        }}
+    <>
+      {/* ── Card Row ── */}
+      <div
+        className={`candidate-card anim-fade-up delay-${Math.min(index + 1, 6)} ${expanded ? 'expanded' : ''}`}
+        onClick={() => setExpanded(!expanded)}
       >
-        <div style={{ flex: 1.5 }}>
-          <strong style={{ display: 'block', fontSize: '1.1rem' }}>{app.candidate_name}</strong>
-          <span style={{ fontSize: '0.85rem', color: '#6B7280' }}>{roleTitle}</span>
+        {/* Avatar */}
+        <div className="candidate-avatar">
+          {getInitials(app.candidate_name)}
         </div>
-        <div style={{ flex: 1, textTransform: 'capitalize' }}>
-          <span style={{ padding: '0.25rem 0.5rem', background: app.status === 'new' ? '#DBEAFE' : '#E0E7FF', color: '#1E40AF', borderRadius: '99px', fontSize: '0.85rem', fontWeight: 500 }}>
-            {app.status}
-          </span>
+
+        {/* Identity */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
+            <span className="candidate-name">{app.candidate_name}</span>
+            <span className="candidate-role-badge">{roleTitle}</span>
+          </div>
+          <span className="candidate-status-badge">{app.status || 'new'}</span>
         </div>
-        <div style={{ flex: 1, fontWeight: 'bold' }}>
-          Score: {mappedReport.final_score}
+
+        {/* Score */}
+        <div className="candidate-score">
+          <div className="score-label">Match Score</div>
+          <div className="score-value" style={{ color: scoreColor(score) }}>
+            {score > 0 ? score : '—'}
+          </div>
+          <div className="score-dots">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className={`score-dot ${i < filled ? 'filled' : 'empty'}`}
+                style={i < filled ? { background: scoreColor(score) } : {}}
+              />
+            ))}
+          </div>
         </div>
-        <div style={{ color: '#6B7280', userSelect: 'none' }}>
-          {expanded ? '▲ Collapse' : '▼ Expand'}
-        </div>
+
+        {/* Chevron */}
+        <span className="material-symbols-outlined expand-chevron">
+          expand_more
+        </span>
       </div>
-      
+
+      {/* ── Expanded Drawer ── */}
       {expanded && (
-        <div style={{ padding: '0.5rem 1.5rem 1.5rem 1.5rem', background: '#fff' }}>
-          <ReportDetail mappedReport={mappedReport} />
+        <div className="report-drawer">
+          {/* A2A Pipeline Visualization */}
+          <div className="pipeline-strip">
+            {PIPELINE_STAGES.map((stage, i) => (
+              <React.Fragment key={stage.label}>
+                <div className="pipeline-agent">
+                  <div className={`pipeline-icon-wrap ${i === 0 ? 'active' : ''}`}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        color: i < 2 ? 'var(--tertiary)' : i < 3 ? 'var(--primary)' : 'var(--outline)',
+                        fontSize: '20px',
+                      }}
+                    >
+                      {stage.icon}
+                    </span>
+                    {i === 0 && (
+                      <span
+                        style={{
+                          position: 'absolute', inset: '-4px',
+                          background: 'rgba(76,215,246,0.15)',
+                          borderRadius: 'var(--radius-md)',
+                          animation: 'pulseGlow 3s ease-in-out infinite',
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className="pipeline-label">{stage.label}</div>
+                  <div style={{ fontSize: '0.5rem', color: 'var(--outline)', textAlign: 'center' }}>{stage.sub}</div>
+                </div>
+                {i < PIPELINE_STAGES.length - 1 && (
+                  <div className="pipeline-connector">
+                    <div className="pipeline-dot" />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Report Detail */}
+          <ReportDetail mappedReport={mapped} />
         </div>
       )}
-    </div>
+    </>
   );
 }

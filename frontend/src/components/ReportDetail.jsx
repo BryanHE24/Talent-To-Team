@@ -1,69 +1,206 @@
 import React from 'react';
 
 export default function ReportDetail({ mappedReport }) {
-  const { 
-    candidate_recommendation, 
-    final_score, 
-    hr_summary, 
-    strengths, 
-    risks, 
-    category_scores, 
-    match_rationale 
+  const {
+    candidate_recommendation,
+    final_score,
+    hr_summary,
+    strengths = [],
+    risks = [],
+    category_scores = {},
+    match_rationale,
   } = mappedReport;
 
-  const hasCategoryScores = Object.keys(category_scores).length > 0;
+  const catEntries = Object.entries(category_scores);
 
   return (
-    <div style={{ padding: '1.25rem', background: '#F8FAFC', borderRadius: '4px', margin: '1rem 0', border: '1px solid #E2E8F0' }}>
-      <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#334155' }}>HR Report Detail</h3>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
-        <div>
-          <strong>Recommendation:</strong> {candidate_recommendation} <br/>
-          <strong>Final Score:</strong> {final_score}
+    <div>
+      {/* ── AI Verdict Banner ── */}
+      {hr_summary && (
+        <div className="report-summary anim-fade-in">
+          <span
+            style={{
+              fontSize: '0.5625rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: 'var(--tertiary)',
+              display: 'block',
+              marginBottom: '0.375rem',
+            }}
+          >
+            ✦ AI Fit Report
+          </span>
+          {hr_summary}
         </div>
-        {hasCategoryScores && (
-          <div>
-            <strong>Category Scores:</strong>
-            <ul style={{ margin: '0.25rem 0', paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-              {Object.entries(category_scores).map(([key, val]) => (
-                <li key={key}>{key.replace('_', ' ')}: {val}/100</li>
-              ))}
-            </ul>
+      )}
+
+      {/* ── Recommendation + Score ── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          marginBottom: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div
+          style={{
+            padding: '0.75rem 1rem',
+            background: 'rgba(192,193,255,0.06)',
+            border: '1px solid rgba(192,193,255,0.15)',
+            borderRadius: 'var(--radius-md)',
+            flex: 1,
+            minWidth: '140px',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.5625rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: 'var(--primary)',
+              marginBottom: '0.25rem',
+            }}
+          >
+            Recommendation
           </div>
-        )}
+          <div
+            style={{
+              fontFamily: 'var(--font-headline)',
+              fontSize: '1rem',
+              fontWeight: 800,
+              color: 'var(--on-surface)',
+            }}
+          >
+            {candidate_recommendation || '—'}
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: '0.75rem 1rem',
+            background: 'rgba(76,215,246,0.06)',
+            border: '1px solid rgba(76,215,246,0.15)',
+            borderRadius: 'var(--radius-md)',
+            flex: 1,
+            minWidth: '100px',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.5625rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: 'var(--tertiary)',
+              marginBottom: '0.25rem',
+            }}
+          >
+            Final Score
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-headline)',
+              fontSize: '1.5rem',
+              fontWeight: 900,
+              color: 'var(--tertiary)',
+            }}
+          >
+            {final_score ?? '—'}
+          </div>
+        </div>
       </div>
 
-      <div style={{ marginBottom: '1.25rem' }}>
-        <strong>HR Summary:</strong>
-        <p style={{ margin: '0.25rem 0', lineHeight: '1.5' }}>{hr_summary}</p>
-      </div>
+      {/* ── Category Score Bars ── */}
+      {catEntries.length > 0 && (
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.2)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1rem',
+            marginBottom: '1rem',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.5625rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: 'var(--outline)',
+              marginBottom: '0.75rem',
+            }}
+          >
+            Skill Breakdown
+          </div>
+          {catEntries.map(([key, val]) => (
+            <div className="cat-row" key={key}>
+              <div className="cat-label">{key.replace(/_/g, ' ')}</div>
+              <div className="cat-bar-track">
+                <div
+                  className="cat-bar-fill"
+                  style={{ '--bar-target': `${val}%`, width: `${val}%` }}
+                />
+              </div>
+              <div className="cat-score">{val}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
+      {/* ── Strengths & Risks ── */}
       {(strengths.length > 0 || risks.length > 0) && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+        <div className="report-grid">
           {strengths.length > 0 && (
-            <div>
-              <strong>Strengths:</strong>
-              <ul style={{ margin: '0.25rem 0', paddingLeft: '1.5rem', color: '#166534' }}>
-                {strengths.map((str, idx) => <li key={idx}>{str}</li>)}
+            <div className="report-section">
+              <div className="report-section-label strength">✦ Key Strengths</div>
+              <ul className="report-list">
+                {strengths.map((s, i) => <li key={i}>{s}</li>)}
               </ul>
             </div>
           )}
           {risks.length > 0 && (
-            <div>
-              <strong>Risks:</strong>
-              <ul style={{ margin: '0.25rem 0', paddingLeft: '1.5rem', color: '#991B1B' }}>
-                {risks.map((risk, idx) => <li key={idx}>{risk}</li>)}
+            <div className="report-section">
+              <div className="report-section-label risk" style={{ color: 'var(--error)' }}>⚠ Risk Factors</div>
+              <ul className="report-list risk-list">
+                {risks.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             </div>
           )}
         </div>
       )}
 
+      {/* ── Deep Rationale ── */}
       {match_rationale && (
-        <div style={{ padding: '1rem', background: '#fff', border: '1px solid #E2E8F0', borderRadius: '4px', marginTop: '1rem' }}>
-          <strong>Deep Match Rationale:</strong>
-          <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', lineHeight: '1.5' }}>{match_rationale}</p>
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.2)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1rem',
+            fontSize: '0.8125rem',
+            color: 'var(--on-surface-var)',
+            lineHeight: '1.7',
+            marginTop: '0.5rem',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '0.5625rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: 'var(--outline)',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Deep Match Rationale
+          </span>
+          {match_rationale}
         </div>
       )}
     </div>
